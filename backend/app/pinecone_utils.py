@@ -3,10 +3,12 @@ from pinecone import Pinecone, ServerlessSpec
 from langchain_community.vectorstores import Pinecone as LangChainPinecone
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.schema import Document
-from .embeddings import embedding_model
 import traceback
 import numpy as np
 from sklearn.preprocessing import normalize
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), 'config.env'))
 
 # Use the model name instead of the embedding model object
 model_name = 'sentence-transformers/all-MiniLM-L6-v2'
@@ -15,10 +17,13 @@ model_name = 'sentence-transformers/all-MiniLM-L6-v2'
 embeddings = HuggingFaceEmbeddings(model_name=model_name)
 
 # Set the API key as an environment variable
-os.environ['PINECONE_API_KEY'] = "your-secret-key"
+PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
+
+if PINECONE_API_KEY is None:
+    raise ValueError("PINECONE_API_KEY environment variable not set")
 
 # Initialize the Pinecone instance
-pc = Pinecone(api_key=os.environ['PINECONE_API_KEY'])
+pc = Pinecone(api_key=PINECONE_API_KEY)
 
 index_name = "ecommerce-chatbot"
 
@@ -81,15 +86,39 @@ def query_pinecone(query):
         
         results = vector_store.similarity_search_with_score(query, k=5)
         
+        # Log the retrieved content and metadata
+        print("Retrieved Documents:")
+        for doc, score in results:
+            print(f"Content: {doc.page_content}")
+            print(f"Metadata: {doc.metadata}")
+            print(f"Relevance Score: {score}")
+            print("-" * 50)
+        
         return [{'content': doc.page_content, 'metadata': doc.metadata, 'score': float(score)} for doc, score in results]
     except Exception as e:
         print(f"Error querying Pinecone: {type(e).__name__}: {str(e)}")
         traceback.print_exc()
         return []
 
-def build_context(results):
+
+def build_context(results, max_length=500):
     try:
-        return "\n\n".join(f"Content: {r['content']}\nCategory: {r['metadata'].get('category', 'N/A')}\nTags: {', '.join(r['metadata'].get('tags', []))}\nRelevance Score: {r['score']}" for r in results)
+        # Sort results by relevance score
+        results = sorted(results, key=lambda x: x['score'], reverse=True)
+        
+        # Collect content until we reach the max length
+        context_pieces = []
+        current_length = 0
+        for r in results:
+            content = r['content']
+            if current_length + len(content) > max_length:
+                break
+            context_pieces.append(content)
+            current_length += len(content)
+        
+        # Join selected content pieces
+        context = "\n\n".join(context_pieces)
+        return context
     except Exception as e:
         print(f"Error building context: {type(e).__name__}: {str(e)}")
         traceback.print_exc()
