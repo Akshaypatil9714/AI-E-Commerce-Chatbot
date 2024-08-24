@@ -12,13 +12,20 @@ function Chatbox() {
     try {
       const response = await axios.post('/api/chat/', { query: message });
       console.log("Response:", response.data.response);
-      setMessages([
-        ...messages,
+      console.log("Retrieved Documents:", response.data.retrieved_docs);  // Log retrieved content
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
         newMessage,
         { role: 'assistant', content: response.data.response },
+        { role: 'system', content: JSON.stringify(response.data.retrieved_docs, null, 2) }  // Optional: Show retrieved docs
       ]);
     } catch (error) {
       console.error("Error sending message:", error);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { role: 'assistant', content: "Sorry, something went wrong. Please try again." },
+      ]);
     }
   };
 
