@@ -4,3 +4,10 @@ venv/
 *.env
 *.pem
 *.key
+config.env
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Python bytecode files
+*.pyc
+__pycache__/
