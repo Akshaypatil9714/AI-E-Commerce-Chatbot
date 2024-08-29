@@ -8,7 +8,9 @@ app = FastAPI()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://ai-e-commerce-chatbot.vercel.app"],  # Update this with your Vercel domain or "*" to allow all origins
+    allow_origins=["https://ai-e-commerce-chatbot.vercel.app",
+                   "http://localhost:3000",
+    ],  # Update this with your Vercel domain or "*" to allow all origins
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
