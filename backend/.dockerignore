@@ -1,0 +1,10 @@
+# Exclude unnecessary files from the Docker build
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.db
+.DS_Store
+.git
+.vscode
+.env
