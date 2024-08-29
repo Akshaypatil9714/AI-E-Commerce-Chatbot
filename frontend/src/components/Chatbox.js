@@ -5,20 +5,24 @@ import ChatInput from './ChatInput';
 function Chatbox() {
   const [messages, setMessages] = useState([]);
 
+  // Set the API base URL based on the environment variable or default to localhost for local development
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+
   const sendMessage = async (message) => {
     const newMessage = { role: 'user', content: message };
     setMessages([...messages, newMessage]);
 
     try {
-      const response = await axios.post('/api/chat/', { query: message });
+      // Use the dynamically determined API base URL
+      const response = await axios.post(`${API_BASE_URL}/api/chat/`, { query: message });
       console.log("Response:", response.data.response);
-      console.log("Retrieved Documents:", response.data.retrieved_docs);  // Log retrieved content
+      console.log("Retrieved Documents:", response.data.retrieved_docs); // Log retrieved content
 
       setMessages((prevMessages) => [
         ...prevMessages,
         newMessage,
         { role: 'assistant', content: response.data.response },
-        { role: 'system', content: JSON.stringify(response.data.retrieved_docs, null, 2) }  // Optional: Show retrieved docs
+        { role: 'system', content: JSON.stringify(response.data.retrieved_docs, null, 2) }, // Optional: Show retrieved docs
       ]);
     } catch (error) {
       console.error("Error sending message:", error);
