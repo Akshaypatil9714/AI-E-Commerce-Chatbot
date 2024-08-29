@@ -7,6 +7,7 @@ import traceback
 import numpy as np
 from sklearn.preprocessing import normalize
 from dotenv import load_dotenv
+from pinecone.core.openapi.shared.exceptions import PineconeApiException
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), 'config.env'))
 
@@ -34,20 +35,50 @@ def get_pinecone_index():
     global pinecone_index
     if pinecone_index is None:
         try:
-            if index_name not in pc.list_indexes().names():
+            # Check if the index already exists
+            indexes = pc.list_indexes()
+            if index_name not in indexes:
+                print(f"Index {index_name} not found. Creating a new index.")
                 pc.create_index(
                     name=index_name, 
                     dimension=384, 
                     metric='cosine',
                     spec=ServerlessSpec(cloud='aws', region='us-east-1')
                 )
+                print(f"Index {index_name} created successfully.")
+            else:
+                print(f"Index {index_name} already exists, loading it.")
+
+            # Load the existing index
             pinecone_index = pc.Index(index_name)
-            print(f"Index {index_name} created and loaded successfully.")
+            print(f"Index {index_name} loaded successfully.")
+        except PineconeApiException as e:
+            # Handle the specific conflict error
+            if e.status == 409:
+                print(f"Index {index_name} already exists, conflict error handled.")
+                pinecone_index = pc.Index(index_name)
+            else:
+                print(f"Error during Pinecone index creation or loading: {e}")
+                traceback.print_exc()
+                pinecone_index = None
         except Exception as e:
-            print(f"Error creating Pinecone index: {e}")
+            print(f"Unexpected error during Pinecone index creation or loading: {e}")
+            traceback.print_exc()
+            pinecone_index = None
     return pinecone_index
 
+
 def load_knowledge_base(knowledge_base):
+    index = get_pinecone_index()
+    if index is None:
+        raise ValueError("Pinecone index is None.")
+
+    # Check if index already contains vectors, if so, skip reloading
+    stats = index.describe_index_stats()
+    if stats['total_vector_count'] > 0:
+        print("Index already contains vectors, skipping loading knowledge base.")
+        return LangChainPinecone.from_existing_index(index_name, embeddings)
+    
     try:
         documents = []
         for item in knowledge_base['knowledge_base']:
@@ -99,7 +130,6 @@ def query_pinecone(query):
         print(f"Error querying Pinecone: {type(e).__name__}: {str(e)}")
         traceback.print_exc()
         return []
-
 
 def build_context(results, max_length=500):
     try:
