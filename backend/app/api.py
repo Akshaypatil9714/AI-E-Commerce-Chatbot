@@ -7,7 +7,7 @@ import asyncio
 router = APIRouter()
 
 # Load the knowledge base from the JSON file
-with open("/Users/akshaypatil/Desktop/Headstarter/AI_chatbot/backend/knowledge_base.json", "r") as file:
+with open("knowledge_base.json", "r") as file:
     knowledge_base = json.load(file)
 
 # Create a Pinecone index
