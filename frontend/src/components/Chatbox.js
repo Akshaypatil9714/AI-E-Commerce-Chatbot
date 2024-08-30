@@ -6,7 +6,7 @@ function Chatbox() {
   const [messages, setMessages] = useState([]);
 
   // Set the API base URL based on the environment variable or default to localhost for local development
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
+  const API_BASE_URL = process.env.REACT_APP_NODEJS_API_URL || 'http://localhost:3001';
 
   const sendMessage = async (message) => {
     const newMessage = { role: 'user', content: message };
