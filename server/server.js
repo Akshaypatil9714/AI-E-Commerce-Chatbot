@@ -4,6 +4,7 @@ const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const FASTAPI_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
 // Serve the static files from the React app
 app.use(express.static(path.join(__dirname, "../frontend/build")));
@@ -12,7 +13,7 @@ app.use(express.static(path.join(__dirname, "../frontend/build")));
 app.use(
   "/api",
   createProxyMiddleware({
-    target: "http://localhost:8000",
+    target: FASTAPI_BASE_URL,
     changeOrigin: true,
     pathRewrite: {
       "^/api": "",
