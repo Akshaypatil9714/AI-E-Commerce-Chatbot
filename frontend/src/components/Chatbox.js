@@ -16,13 +16,16 @@ function Chatbox() {
       // Use the dynamically determined API base URL
       const response = await axios.post(`${API_BASE_URL}/api/chat/`, { query: message });
       console.log("Response:", response.data.response);
-      console.log("Retrieved Documents:", response.data.retrieved_docs); // Log retrieved content
+      //console.log("Retrieved Documents:", response.data.retrieved_docs); // Log retrieved content
+      // Extract relevant documents to display
+      const retrievedDocs = response.data.retrieved_docs.map(doc => doc.content).join('\n\n');
 
       setMessages((prevMessages) => [
         ...prevMessages,
         newMessage,
-        { role: 'assistant', content: response.data.response }
+        { role: 'assistant', content: response.data.response },
         // { role: 'system', content: JSON.stringify(response.data.retrieved_docs, null, 2) }, // Optional: Show retrieved docs
+        { role: 'system', content: retrievedDocs } // Display retrieved content in a readable format
       ]);
     } catch (error) {
       console.error("Error sending message:", error);
