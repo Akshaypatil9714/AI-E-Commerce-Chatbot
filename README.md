@@ -50,30 +50,37 @@ The system follows a Retrieval-Augmented Generation (RAG) architecture:
    cd ai-customer-service-chatbot/backend
 
 2. Set up a virtual environment and install dependencies:
+        ```bash
     python -m venv venv
     source venv/bin/activate
     pip install -r requirements.txt
 
 3. Set up your Google Cloud credentials:
+        ```bash
     export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-account-key.json"
 
 4. Configure environment variables:
     - Create a .env file in the backend directory and add your configuration:
+            ```bash
         GOOGLE_PROJECT_ID=your-google-cloud-project-id
         GEMINI_ENDPOINT_ID=your-gemini-endpoint-id
 
 5. Run the backend:
+        ```bash
     uvicorn main:app --host 0.0.0.0 --port 8000
 
 ### Frontend Setup
 
 1. Navigate to the frontend directory:
+        ```bash
     cd ../frontend
 
 2. Install dependencies:
+        ```bash
     npm install
 
 3. Run the frontend:
+        ```bash
     npm start
 
 4. Access the chatbot at http://localhost:3000.
@@ -93,6 +100,7 @@ To deploy the backend on GCP:
 - Create a Google Cloud account if you haven't already.
 - Install the Google Cloud SDK on your local machine.
 - Initialize the SDK and authenticate
+        ```bash
     gcloud init
     gcloud auth login
 
@@ -105,17 +113,21 @@ To deploy the backend on GCP:
 5. Create a .dockerignore file for the Node.js server
 
 6. Build and push the fast API Docker image to Google Container Registry (GCR):
+        ```bash
     gcloud builds submit --tag gcr.io/[PROJECT_ID]/ai-chatbot-fastapi-backend
 
 7. Deploy to Cloud Run
+        ```bash
     gcloud run deploy ai-chatbot-fastapi-backend --image gcr.io/[PROJECT_ID]/ai-chatbot-fastapi-backend --platform managed --allow-unauthenticated
 
 8. Note the URL provided after deployment
 
 10. Build and push the Node.JS server Docker image to Google Container Registry (GCR):
+        ```bash
     gcloud builds submit --tag gcr.io/[PROJECT_ID]/nodejs-server
 
 11. Deploy to Cloud Run
+        ```bash
     gcloud run deploy nodejs-server \                                            
   --image gcr.io/gen-lang-client-0128515741/nodejs-server \
   --platform managed \
@@ -138,6 +150,6 @@ To deploy the backend on GCP:
 
 ### Screenshots
 
-![User Interface Screenshot](images/Screenshot 2024-09-02 at 12.07.31.png)
+![User Interface Screenshot](./images/Screenshot 2024-09-02 at 12.07.31.png)
 ![Conversations]
-    (images/Screenshot 2024-09-02 at 12.07.45.png) (images/Screenshot 2024-09-02 at 12.09.25.png)
+    (./images/Screenshot 2024-09-02 at 12.07.45.png) (/.images/Screenshot 2024-09-02 at 12.09.25.png)
