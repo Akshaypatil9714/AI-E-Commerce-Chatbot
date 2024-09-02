@@ -127,13 +127,14 @@ To deploy the backend on GCP:
     gcloud builds submit --tag gcr.io/[PROJECT_ID]/nodejs-server
 
 11. Deploy to Cloud Run
-    ```bash
+    ```
     gcloud run deploy nodejs-server \                                            
   --image gcr.io/gen-lang-client-0128515741/nodejs-server \
   --platform managed \
   --allow-unauthenticated \
   --set-env-vars="FASTAPI_BASE_URL=[FASTAPI_URL]" \
   --region us-central1
+    ```
 
 ### Usage
 - Open the chat interface in your browser.
