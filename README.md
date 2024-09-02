@@ -78,6 +78,51 @@ The system follows a Retrieval-Augmented Generation (RAG) architecture:
 
 4. Access the chatbot at http://localhost:3000.
 
+
+### Deployment
+
+## Frontend Deployment on Vercel
+The frontend is deployed on Vercel for seamless deployment, scalability, and speed. Visit the Vercel deployment URL to access the chatbot's user interface.
+
+## Backend Deployment on Google Cloud Platform (GCP)
+The backend is deployed on Google Cloud Platform (GCP) using Cloud Run, which handles API requests, integrates with Google Gemini and Pinecone, and ensures a reliable backend environment.
+
+To deploy the backend on GCP:
+
+1. Set Up Google Cloud
+- Create a Google Cloud account if you haven't already.
+- Install the Google Cloud SDK on your local machine.
+- Initialize the SDK and authenticate
+    gcloud init
+    gcloud auth login
+
+2. Create Dockerfile for the FastAPI backend
+
+3. Create a .dockerignore file to exclude unnecessary files
+
+4. Create Dockerfile for the Node.js server
+
+5. Create a .dockerignore file for the Node.js server
+
+6. Build and push the fast API Docker image to Google Container Registry (GCR):
+    gcloud builds submit --tag gcr.io/[PROJECT_ID]/ai-chatbot-fastapi-backend
+
+7. Deploy to Cloud Run
+    gcloud run deploy ai-chatbot-fastapi-backend --image gcr.io/[PROJECT_ID]/ai-chatbot-fastapi-backend --platform managed --allow-unauthenticated
+
+8. Note the URL provided after deployment
+
+10. Build and push the Node.JS server Docker image to Google Container Registry (GCR):
+    gcloud builds submit --tag gcr.io/[PROJECT_ID]/nodejs-server
+
+11. Deploy to Cloud Run
+    gcloud run deploy nodejs-server \                                            
+  --image gcr.io/gen-lang-client-0128515741/nodejs-server \
+  --platform managed \
+  --allow-unauthenticated \
+  --set-env-vars="FASTAPI_BASE_URL=[FASTAPI_URL]" \
+  --region us-central1
+
 ### Usage
 - Open the chat interface in your browser.
 - Type your query and press "Send".
@@ -90,3 +135,9 @@ The system follows a Retrieval-Augmented Generation (RAG) architecture:
 - Google Gemini API: Language model API for generating responses.
 - Pinecone: Vector store for storing and retrieving knowledge base documents.
 - Google Cloud: Hosting and infrastructure for the AI model.
+
+### Screenshots
+
+![User Interface Screenshot](images/Screenshot 2024-09-02 at 12.07.31.png)
+![Conversations]
+    (images/Screenshot 2024-09-02 at 12.07.45.png) (images/Screenshot 2024-09-02 at 12.09.25.png)
