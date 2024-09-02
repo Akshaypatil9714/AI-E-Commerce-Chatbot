@@ -150,6 +150,6 @@ To deploy the backend on GCP:
 
 ### Screenshots
 
-![User Interface Screenshot](./images/Screenshot 2024-09-02 at 12.07.31.png)
-![Conversations]
-    (./images/Screenshot 2024-09-02 at 12.07.45.png) (/.images/Screenshot 2024-09-02 at 12.09.25.png)
+![User Interface Screenshot](images/Screenshot 2024-09-02 at 12.07.31.png)
+![Conversations Screenshot](images/Screenshot 2024-09-02 at 12.07.45.png) 
+![Conversation Screenshot](images/Screenshot 2024-09-02 at 12.09.25.png)
